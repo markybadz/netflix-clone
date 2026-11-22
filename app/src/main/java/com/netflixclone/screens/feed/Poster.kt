@@ -16,16 +16,27 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.netflixclone.R
+import com.netflixclone.ui.focusOutline
+import com.netflixclone.ui.isTelevision
 
 @Composable
 fun Poster(url: String?, isLarge: Boolean = false, onClick: () -> Unit) {
+    // Slightly bigger posters on a TV so they read well from the sofa.
+    val tv = isTelevision()
+    val width = when {
+        isLarge && tv -> 200.dp
+        isLarge -> 175.dp
+        tv -> 130.dp
+        else -> 110.dp
+    }
     Box(Modifier.padding(start = 8.dp, top = 2.dp)) {
         AsyncImage(
             model = url,
             contentDescription = null,
             modifier = Modifier
-                .width(if (isLarge) 175.dp else 110.dp)
+                .width(width)
                 .aspectRatio(0.66f)
+                .focusOutline(RoundedCornerShape(4.dp))
                 .clip(RoundedCornerShape(4.dp))
                 .background(colorResource(R.color.dark_gray))
                 .clickable(
@@ -38,7 +49,7 @@ fun Poster(url: String?, isLarge: Boolean = false, onClick: () -> Unit) {
 
         if (isLarge) {
             Column(Modifier
-                .width(175.dp)
+                .width(width)
                 .aspectRatio(0.66f)) {
                 Box(Modifier
                     .fillMaxWidth()

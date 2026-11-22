@@ -42,6 +42,7 @@ import com.netflixclone.screens.MediaDetailsBottomSheet
 import com.netflixclone.screens.PopularMoviesActivity
 import com.netflixclone.screens.PopularTvActivity
 import com.netflixclone.screens.SearchActivity
+import com.netflixclone.ui.focusOutline
 
 object Tab {
     const val TV_SHOWS = "TV Shows"
@@ -166,6 +167,7 @@ fun FeedScreen(feedViewModel: FeedViewModel = viewModel()) {
                         Box(Modifier
                             .weight(1f)
                             .fillMaxHeight()
+                            .focusOutline()
                             .clickable(
                                 interactionSource = MutableInteractionSource(),
                                 indication = rememberRipple(bounded = false),

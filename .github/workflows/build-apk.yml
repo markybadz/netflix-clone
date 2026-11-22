@@ -1,0 +1,60 @@
+# Builds the debug APK on GitHub's servers on every push (or when you click
+# "Run workflow"). Download it from the run's "Artifacts" section.
+# Every successful build is also published as a GitHub release, so the newest
+# APK is always one direct download (no sign-in, no zip) at:
+# https://github.com/markybadz/netflix-clone/releases/latest/download/NetflixClone.apk
+#
+# The app needs a TMDB API key. Add it once as a repository secret named
+# TMDB_API_KEY (Settings > Secrets and variables > Actions); without it the
+# APK still builds but shows no movies.
+name: Build APK
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to publish the release
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Write local.properties
+        env:
+          TMDB_API_KEY: ${{ secrets.TMDB_API_KEY }}
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "api_key=$TMDB_API_KEY" >> local.properties
+
+      - name: Build debug APK
+        run: |
+          chmod +x gradlew
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v6
+        with:
+          name: NetflixClone-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Publish APK as the latest release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp app/build/outputs/apk/debug/app-debug.apk NetflixClone.apk
+          gh release create "build-${{ github.run_number }}" NetflixClone.apk \
+            --target "${{ github.sha }}" \
+            --title "Netflix clone build ${{ github.run_number }}" \
+            --notes "Debug APK built from ${{ github.sha }}. Works on phones and on Android TV / Google TV (e.g. TCL)." \
+            --latest

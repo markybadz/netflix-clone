@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.netflixclone.R
+import com.netflixclone.ui.focusOutline
 import com.netflixclone.constants.ImageSize
 import com.netflixclone.data_models.Movie
 import com.netflixclone.extensions.getBackdropUrl
@@ -39,6 +40,7 @@ fun UpcomingItem(movie: Movie, onClick: (Movie) -> Unit) {
     val genresText = remember(movie) { movie.getGenresText() }
 
     Column(Modifier
+        .focusOutline()
         .clickable(
             interactionSource = MutableInteractionSource(),
             indication = rememberRipple(),
