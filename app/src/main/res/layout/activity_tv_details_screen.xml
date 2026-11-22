@@ -144,7 +144,7 @@
                 android:paddingHorizontal="2dp"
                 android:visibility="gone"
                 app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-                app:spanCount="3"
+                app:spanCount="@integer/grid_span_count"
                 tools:itemCount="15"
                 tools:listitem="@layout/item_media" />
 

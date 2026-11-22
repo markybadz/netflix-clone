@@ -18,6 +18,8 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import androidx.paging.map
 import com.netflixclone.R
+import com.netflixclone.ui.isTelevision
+import androidx.compose.ui.unit.dp
 import com.netflixclone.data.MediaViewModel
 import com.netflixclone.data_models.Movie
 import com.netflixclone.extensions.toMediaBsData
@@ -48,6 +50,8 @@ fun UpcomingScreen(viewModel: MediaViewModel = viewModel()) {
         LazyColumn(Modifier
             .fillMaxSize()
             .padding(innerPadding)
+            // Keep full-width backdrops from filling a whole TV screen each.
+            .padding(horizontal = if (isTelevision()) 160.dp else 0.dp)
         ) {
             items(upcomingItems, key = { it.id }) {
                 if (it != null) {

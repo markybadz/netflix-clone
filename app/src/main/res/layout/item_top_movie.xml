@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:foreground="?selectableItemBackgroundBorderless"
+    android:foreground="@drawable/tv_focus_foreground"
     android:gravity="center_vertical"
     android:orientation="horizontal"
     tools:ignore="UnusedAttribute"

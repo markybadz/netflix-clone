@@ -33,21 +33,30 @@ import com.netflixclone.constants.ImageSize
 import com.netflixclone.data_models.Media
 import com.netflixclone.extensions.getPosterUrl
 import com.netflixclone.helpers.getGenresText
+import com.netflixclone.extensions.getBackdropUrl
+import com.netflixclone.ui.focusOutline
+import com.netflixclone.ui.isTelevision
 
 @Composable
 fun FeedHeader(data: Media, onInfoClick: (Media) -> Unit) {
-    val (posterUrl, genresText) = remember(data) {
+    // On a landscape TV screen a portrait poster would fill several screens,
+    // so use the wide backdrop image and a 16:9-ish header instead.
+    val tv = isTelevision()
+    val (posterUrl, genresText) = remember(data, tv) {
         when (data) {
-            is Media.Movie -> Pair(data.getPosterUrl(ImageSize.ORIGINAL),
+            is Media.Movie -> Pair(
+                if (tv) data.getBackdropUrl(ImageSize.ORIGINAL) else data.getPosterUrl(ImageSize.ORIGINAL),
                 getGenresText(data.genreIds))
-            is Media.Tv -> Pair(data.getPosterUrl(ImageSize.ORIGINAL), getGenresText(data.genreIds))
+            is Media.Tv -> Pair(
+                if (tv) data.getBackdropUrl(ImageSize.ORIGINAL) else data.getPosterUrl(ImageSize.ORIGINAL),
+                getGenresText(data.genreIds))
             else -> Pair(null, null)
         }
     }
 
     Box(Modifier
         .fillMaxWidth()
-        .aspectRatio(0.7f)
+        .aspectRatio(if (tv) 2f else 0.7f)
     ) {
         AsyncImage(
             model = posterUrl,
@@ -125,6 +134,7 @@ fun FeedHeader(data: Media, onInfoClick: (Media) -> Unit) {
                     modifier = Modifier
                         .padding(horizontal = 32.dp)
                         .height(32.dp)
+                        .focusOutline(RoundedCornerShape(4.dp))
                         .clip(RoundedCornerShape(4.dp))
                         .background(Color.White)
                         .clickable(
@@ -155,6 +165,7 @@ fun FeedHeader(data: Media, onInfoClick: (Media) -> Unit) {
                 Column(
                     modifier = Modifier
                         .width(80.dp)
+                        .focusOutline(RoundedCornerShape(8.dp))
                         .clip(RoundedCornerShape(8.dp))
                         .clickable(
                             interactionSource = MutableInteractionSource(),
